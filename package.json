@@ -1,0 +1,27 @@
+{
+  "name": "webscrape",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start" : "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cheerio": "^1.0.0-rc.10",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "express-validator": "^6.12.1",
+    "himalaya": "^1.1.0",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6",
+    "sanitize-html": "^2.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
