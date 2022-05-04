@@ -28,8 +28,8 @@ router.post('/site', async (req, res) => {
                     await json.push(ajson);
                 })
                await setTimeout(async () => {
-                    // await res.status(200).send({ data: json });
-                    await res.status(200).send(json);
+                    await res.status(200).send({ data: json });
+                    // await res.status(200).send(json);
                 }, 100);
                 // console.log("here", json)
             } catch (error) {
