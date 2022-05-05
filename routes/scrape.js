@@ -6,6 +6,11 @@ var himalaya = require('himalaya');
 const sanitizeHtml = require('sanitize-html');
 
 router.post('/site', async (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); // If needed
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type'); // If needed
+    res.setHeader('Access-Control-Allow-Credentials', true); // If needed
+
     await request(req.body.scrapeUrl, async (err, resp, html) => {
         if (!err && resp.statusCode == 200) {
             try {
@@ -16,7 +21,7 @@ router.post('/site', async (req, res) => {
                         allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img'])
                     }).replace(/(\r\n|\n|\r)/gm, "");
 
-                    if(req.body.restype && req.body.restype == "htmlString"){
+                    if (req.body.restype && req.body.restype == "htmlString") {
                         json += item1;
                         return;
                     }
@@ -27,7 +32,7 @@ router.post('/site', async (req, res) => {
                     var ajson = await himalaya.parse(item1);
                     await json.push(ajson);
                 })
-               await setTimeout(async () => {
+                await setTimeout(async () => {
                     await res.status(200).send({ data: json });
                     // await res.status(200).send(json);
                 }, 100);
@@ -38,7 +43,7 @@ router.post('/site', async (req, res) => {
 
             }
         } else {
-            res.status(404).send({ err: "Can't Scrape"});
+            res.status(404).send({ err: "Can't Scrape" });
         }
     })
 });
