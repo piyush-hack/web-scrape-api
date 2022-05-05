@@ -14,7 +14,14 @@ router.post('/site', async (req, res) => {
                 let json = [];
                 await $(req.body.section).each(async (i, data) => {
                     const item1 = await sanitizeHtml($(data).html(), {
-                        allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img'])
+                        allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+                        allowedAttributes: {
+                            a: [ 'href', 'name', 'target' ],
+                            // We don't currently allow img itself by default, but
+                            // these attributes would make sense if we did.
+                            img: [ 'src', 'srcset', 'alt', 'title', 'width', 'height', 'loading' ],
+                            '*': [ 'id' , 'class' ]
+                          }
                     }).replace(/(\r\n|\n|\r)/gm, "");
 
                     if (req.body.restype && req.body.restype == "htmlString") {
