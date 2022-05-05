@@ -39,7 +39,7 @@ router.post('/site', async (req, res) => {
                 // console.log("here", json)
             } catch (error) {
                 // console.log(error);
-                res.status(404).send({ err: error });
+                res.status(404).send({ err: "error" });
 
             }
         } else {
