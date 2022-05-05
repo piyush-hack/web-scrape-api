@@ -6,6 +6,7 @@ var himalaya = require('himalaya');
 const sanitizeHtml = require('sanitize-html');
 
 router.post('/site', async (req, res) => {
+    console.log("body " , req.body);
     await request(req.body.scrapeUrl, async (err, resp, html) => {
         if (!err && resp.statusCode == 200) {
             try {
