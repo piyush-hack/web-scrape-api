@@ -6,11 +6,6 @@ var himalaya = require('himalaya');
 const sanitizeHtml = require('sanitize-html');
 
 router.post('/site', async (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); // If needed
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type'); // If needed
-    res.setHeader('Access-Control-Allow-Credentials', true); // If needed
-
     await request(req.body.scrapeUrl, async (err, resp, html) => {
         if (!err && resp.statusCode == 200) {
             try {
