@@ -11,8 +11,6 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(express.static(__dirname + '/public'));
-app.use('/uploads', express.static('uploads'));
 app.use('/api/scrape', require('./routes/scrape'));
 
 app.get('/', (req, res) => {
