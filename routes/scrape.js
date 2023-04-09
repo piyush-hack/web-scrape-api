@@ -14,6 +14,7 @@ router.post('/site', async (req, res) => {
         await request(req.body.scrapeUrl, async (err, resp, html) => {
             if (!err && resp.statusCode == 200) {
                 try {
+                    // res.send(html);
                     await scrapeSite(req.body, html, res)
                 } catch (error) {
                     // console.log(error);
@@ -53,33 +54,53 @@ async function scrapeSite(body, html, res) {
     req.body = body;
     const $ = cheerio.load(html);
     let json = [];
-    await $(req.body.section).each(async (i, data) => {
-        const item1 = await sanitizeHtml($(data).html(), {
-            allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
-            allowedAttributes: {
-                a: ['href', 'name', 'target'],
-                // We don't currently allow img itself by default, but
-                // these attributes would make sense if we did.
-                img: ['src', 'srcset', 'alt', 'title', 'loading', 'data-src'],
-                '*': ['id', 'class']
-            }
-        }).replace(/(\r\n|\n|\r)/gm, "");
+    $(req.body.section.class).each(async (i, data1) => {
+        const item1 = sanitize($, data1)
 
-        if (req.body.restype && req.body.restype == "htmlString") {
-            json += item1;
-            return;
-        }
-        if (req.body.html) {
-            json.push(item1);
-            return;
-        }
-        var ajson = await himalaya.parse(item1);
-        await json.push(ajson);
+        var ajson = (await himalaya.parse(item1))[0];
+        
+        const totalDetails = {};  
+        totalDetails[ajson.attributes[0].key] = ajson.attributes[0].value;
+        const $$ = cheerio.load(data1);
+        req.body.section.children.forEach(async child => {
+            $$(child).each(async (i, data) => {
+                const item1 = sanitize($$ , data) 
+                if (req.body.restype && req.body.restype == "htmlString") {
+                    json += item1;
+                    return;
+                }
+                if (req.body.html) {
+                    totalDetails[child] = (item1.content);
+                    return;
+                }
+                var ajson = await himalaya.parse(item1);
+                totalDetails[child] = ajson[0].content;
+            });
+            json.push(totalDetails)
+        });
+
     })
-    await setTimeout(async () => {
+
+    setTimeout(async () => {
         await res.status(200).send({ data: json });
         // await res.status(200).send(json);
     }, 100);
+}
+
+function sanitize($, data) {
+    return sanitizeHtml($(data).html(), {
+        allowedTags: sanitizeHtml.defaults.allowedTags.concat(['a', 'h3', 'b', 'span']),
+        allowedAttributes: {
+            h3: [],
+            b: [],
+            span: [],
+            a: ['href'],
+            // We don't currently allow img itself by default, but
+            // these attributes would make sense if we did.
+            // img: ['src', 'srcset', 'alt', 'title', 'loading', 'data-src'],
+            '*': ['href']
+        }
+    }).replace(/(\r\n|\n|\r)/gm, "");
 }
 
 
